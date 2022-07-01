@@ -34,7 +34,7 @@ func initConfig() {
 	f.Parse(os.Args[1:])
 	// Display version.
 	if ok, _ := f.GetBool("version"); ok {
-		fmt.Println(buildVersion, buildDate)
+		fmt.Println(buildString)
 		os.Exit(0)
 	}
 

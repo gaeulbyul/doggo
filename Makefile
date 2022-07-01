@@ -1,17 +1,19 @@
 CLI_BIN := ./bin/doggo.bin
 API_BIN := ./bin/doggo-api.bin
 
-HASH := $(shell git rev-parse --short HEAD)
-BUILD_DATE := $(shell date '+%Y-%m-%d %H:%M:%S')
-VERSION := ${HASH}
+LAST_COMMIT := $(shell git rev-parse --short HEAD)
+LAST_COMMIT_DATE := $(shell git show -s --format=%cI ${LAST_COMMIT})
+VERSION := $(shell git describe --tags)
+BUILDSTR := ${VERSION} | Commit ${LAST_COMMIT_DATE}-${LAST_COMMIT} | Build $(shell date --iso-8601=seconds)
+
 
 .PHONY: build-cli
 build-cli:
-	go build -o ${CLI_BIN} -ldflags="-X 'main.buildVersion=${VERSION}' -X 'main.buildDate=${BUILD_DATE}'" ./cmd/doggo/
+	go build -o ${CLI_BIN} -ldflags="-X 'main.buildString=${BUILDSTR}'" ./cmd/doggo/
 
 .PHONY: build-api
 build-api:
-	go build -o ${API_BIN} -ldflags="-X 'main.buildVersion=${VERSION}' -X 'main.buildDate=${BUILD_DATE}'" ./cmd/api/
+	go build -o ${API_BIN} -ldflags="-X 'main.buildString=${BUILDSTR}'" ./cmd/api/
 
 .PHONY: build
 build: build-api build-cli

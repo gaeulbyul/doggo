@@ -16,7 +16,7 @@ var appHelpTextTemplate = `{{ "NAME" | color "" "heading" }}:
   {{ .Name | color "green" "bold" }} [--] {{ "[query options]" | color "yellow" "" }} {{ "[arguments...]" | color "cyan" "" }}
 
 {{ "VERSION" | color "" "heading" }}:
-  {{.Version | color "red" "" }} - {{.Date | color "red" ""}}
+  {{.Version | color "red" "" }}
 
 {{ "EXAMPLES" | color "" "heading" }}:
   {{ .Name | color "green" "bold" }} {{ "mrkaran.dev" | color "cyan" "" }}                            	Query a domain using defaults.
@@ -69,8 +69,7 @@ func renderCustomHelp() {
 	helpTmplVars := map[string]string{
 		"Name":        "doggo",
 		"Description": "DNS Client for Humans",
-		"Version":     buildVersion,
-		"Date":        buildDate,
+		"Version":     buildString,
 	}
 	tmpl, err := template.New("test").Funcs(template.FuncMap{
 		"color": func(clr string, format string, str string) string {

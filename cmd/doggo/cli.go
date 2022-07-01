@@ -15,16 +15,15 @@ import (
 )
 
 var (
-	// Version and date of the build. This is injected at build-time.
-	buildVersion = "unknown"
-	buildDate    = "unknown"
-	logger       = utils.InitLogger()
-	k            = koanf.New(".")
+	// Version of the build. This is injected at build-time.
+	buildString = "unknown"
+	logger      = utils.InitLogger()
+	k           = koanf.New(".")
 )
 
 func main() {
 	// Initialize app.
-	app := app.New(logger, buildVersion)
+	app := app.New(logger, buildString)
 
 	// Configure Flags.
 	f := flag.NewFlagSet("config", flag.ContinueOnError)
@@ -70,7 +69,7 @@ func main() {
 
 	// If version flag is set, output version and quit.
 	if k.Bool("version") {
-		fmt.Printf("%s - %s\n", buildVersion, buildDate)
+		fmt.Println(buildString)
 		os.Exit(0)
 	}
 

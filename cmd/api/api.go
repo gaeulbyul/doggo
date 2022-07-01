@@ -16,11 +16,11 @@ import (
 )
 
 var (
+	// Version of the build. This is injected at build-time.
+	buildString = "unknown"
+
 	logger = utils.InitLogger()
 	ko     = koanf.New(".")
-	// Version and date of the build. This is injected at build-time.
-	buildVersion = "unknown"
-	buildDate    = "unknown"
 	//go:embed assets/*
 	assetsDir embed.FS
 	//go:embed index.html
@@ -31,7 +31,7 @@ func main() {
 	initConfig()
 
 	// Initialize app.
-	app := app.New(logger, buildVersion)
+	app := app.New(logger, buildString)
 
 	// Register router instance.
 	r := chi.NewRouter()
@@ -69,6 +69,7 @@ func main() {
 
 	logger.WithFields(logf.Fields{
 		"address": srv.Addr,
+		"version": buildString,
 	}).Info("starting server")
 
 	if err := srv.ListenAndServe(); err != nil {
