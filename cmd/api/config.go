@@ -9,7 +9,7 @@ import (
 	"github.com/knadh/koanf/providers/env"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/providers/posflag"
-	"github.com/sirupsen/logrus"
+	"github.com/mr-karan/logf"
 	flag "github.com/spf13/pflag"
 )
 
@@ -41,11 +41,11 @@ func initConfig() {
 	// Read the config files.
 	cFiles, _ := f.GetStringSlice("config")
 	for _, f := range cFiles {
-		logger.WithFields(logrus.Fields{
+		logger.WithFields(logf.Fields{
 			"file": f,
 		}).Info("reading config")
 		if err := ko.Load(file.Provider(f), toml.Parser()); err != nil {
-			logger.Fatalf("error reading config: %v", err)
+			logger.WithError(err).Fatal("error reading config")
 		}
 	}
 	// Load environment variables and merge into the loaded config.
@@ -53,7 +53,7 @@ func initConfig() {
 		return strings.Replace(strings.ToLower(
 			strings.TrimPrefix(s, "DOGGO_API_")), "__", ".", -1)
 	}), nil); err != nil {
-		logger.Fatalf("error loading env config: %v", err)
+		logger.WithError(err).Fatal("error loading env config")
 	}
 
 	ko.Load(posflag.Provider(f, ".", ko), nil)

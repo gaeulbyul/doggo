@@ -5,13 +5,13 @@ import (
 
 	"github.com/miekg/dns"
 	"github.com/mr-karan/doggo/pkg/models"
-	"github.com/sirupsen/logrus"
+	"github.com/mr-karan/logf"
 )
 
 // Options represent a set of common options
 // to configure a Resolver.
 type Options struct {
-	Logger *logrus.Logger
+	Logger *logf.Logger
 
 	Nameservers        []models.Nameserver
 	UseIPv4            bool

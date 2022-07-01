@@ -5,7 +5,7 @@ import (
 
 	"github.com/ameshkov/dnscrypt/v2"
 	"github.com/miekg/dns"
-	"github.com/sirupsen/logrus"
+	"github.com/mr-karan/logf"
 )
 
 // DNSCryptResolver represents the config options for setting up a Resolver.
@@ -49,7 +49,7 @@ func (r *DNSCryptResolver) Lookup(question dns.Question) (Response, error) {
 		messages = prepareMessages(question, r.resolverOptions.Ndots, r.resolverOptions.SearchList)
 	)
 	for _, msg := range messages {
-		r.resolverOptions.Logger.WithFields(logrus.Fields{
+		r.resolverOptions.Logger.WithFields(logf.Fields{
 			"domain":     msg.Question[0].Name,
 			"ndots":      r.resolverOptions.Ndots,
 			"nameserver": r.server,

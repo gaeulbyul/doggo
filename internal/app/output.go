@@ -15,8 +15,7 @@ func (app *App) outputJSON(rsp []resolvers.Response) {
 	// Pretty print with 4 spaces.
 	res, err := json.MarshalIndent(rsp, "", "    ")
 	if err != nil {
-		app.Logger.WithError(err).Error("unable to output data in JSON")
-		app.Logger.Exit(-1)
+		app.Logger.WithError(err).Fatal("unable to output data in JSON")
 	}
 	fmt.Printf("%s", res)
 }

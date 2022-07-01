@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/miekg/dns"
-	"github.com/sirupsen/logrus"
+	"github.com/mr-karan/logf"
 )
 
 // ClassicResolver represents the config options for setting up a Resolver.
@@ -66,7 +66,7 @@ func (r *ClassicResolver) Lookup(question dns.Question) (Response, error) {
 		messages = prepareMessages(question, r.resolverOptions.Ndots, r.resolverOptions.SearchList)
 	)
 	for _, msg := range messages {
-		r.resolverOptions.Logger.WithFields(logrus.Fields{
+		r.resolverOptions.Logger.WithFields(logf.Fields{
 			"domain":     msg.Question[0].Name,
 			"ndots":      r.resolverOptions.Ndots,
 			"nameserver": r.server,
@@ -93,7 +93,7 @@ func (r *ClassicResolver) Lookup(question dns.Question) (Response, error) {
 			default:
 				r.client.Net = "tcp"
 			}
-			r.resolverOptions.Logger.WithField("protocol", r.client.Net).Debug("Response truncated; retrying now")
+			r.resolverOptions.Logger.WithFields(logf.Fields{"protocol": r.client.Net}).Debug("Response truncated; retrying now")
 			return r.Lookup(question)
 		}
 

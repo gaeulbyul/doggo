@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/miekg/dns"
-	"github.com/sirupsen/logrus"
+	"github.com/mr-karan/logf"
 )
 
 // DOHResolver represents the config options for setting up a DOH based resolver.
@@ -49,7 +49,7 @@ func (r *DOHResolver) Lookup(question dns.Question) (Response, error) {
 	)
 
 	for _, msg := range messages {
-		r.resolverOptions.Logger.WithFields(logrus.Fields{
+		r.resolverOptions.Logger.WithFields(logf.Fields{
 			"domain":     msg.Question[0].Name,
 			"ndots":      r.resolverOptions.Ndots,
 			"nameserver": r.server,
@@ -80,15 +80,15 @@ func (r *DOHResolver) Lookup(question dns.Question) (Response, error) {
 			return rsp, fmt.Errorf("error from nameserver %s", resp.Status)
 		}
 		rtt := time.Since(now)
-		// if debug, extract the response headers
-		if r.resolverOptions.Logger.IsLevelEnabled(logrus.DebugLevel) {
-			for header, value := range resp.Header {
-				r.resolverOptions.Logger.WithFields(logrus.Fields{
-					header: value,
-				}).Debug("DOH response header")
-			}
+
+		// Log the response headers in debug mode.
+		for header, value := range resp.Header {
+			r.resolverOptions.Logger.WithFields(logf.Fields{
+				header: value,
+			}).Debug("DOH response header")
 		}
-		// extract the binary response in DNS Message.
+
+		// Extract the binary response in DNS Message.
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			return rsp, err
@@ -98,7 +98,7 @@ func (r *DOHResolver) Lookup(question dns.Question) (Response, error) {
 		if err != nil {
 			return rsp, err
 		}
-		// pack questions in output.
+		// Pack questions in output.
 		for _, q := range msg.Question {
 			ques := Question{
 				Name:  q.Name,
@@ -107,13 +107,13 @@ func (r *DOHResolver) Lookup(question dns.Question) (Response, error) {
 			}
 			rsp.Questions = append(rsp.Questions, ques)
 		}
-		// get the authorities and answers.
+		// Get the authorities and answers.
 		output := parseMessage(&msg, rtt, r.server)
 		rsp.Authorities = output.Authorities
 		rsp.Answers = output.Answers
 
 		if len(output.Answers) > 0 {
-			// stop iterating the searchlist.
+			// Stop iterating the searchlist.
 			break
 		}
 	}

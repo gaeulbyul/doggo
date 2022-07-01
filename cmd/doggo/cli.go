@@ -10,7 +10,7 @@ import (
 	"github.com/mr-karan/doggo/internal/app"
 	"github.com/mr-karan/doggo/pkg/resolvers"
 	"github.com/mr-karan/doggo/pkg/utils"
-	"github.com/sirupsen/logrus"
+	"github.com/mr-karan/logf"
 	flag "github.com/spf13/pflag"
 )
 
@@ -61,34 +61,28 @@ func main() {
 	// Parse and Load Flags.
 	err := f.Parse(os.Args[1:])
 	if err != nil {
-		app.Logger.WithError(err).Error("error parsing flags")
-		app.Logger.Exit(2)
+		app.Logger.WithError(err).Fatal("error parsing flags")
 	}
 	if err = k.Load(posflag.Provider(f, ".", k), nil); err != nil {
-		app.Logger.WithError(err).Error("error loading flags")
 		f.Usage()
-		app.Logger.Exit(2)
+		app.Logger.WithError(err).Fatal("error loading flags")
 	}
 
 	// If version flag is set, output version and quit.
 	if k.Bool("version") {
 		fmt.Printf("%s - %s\n", buildVersion, buildDate)
-		app.Logger.Exit(0)
+		os.Exit(0)
 	}
 
 	// Set log level.
 	if k.Bool("debug") {
 		// Set logger level
-		app.Logger.SetLevel(logrus.DebugLevel)
-	} else {
-		app.Logger.SetLevel(logrus.InfoLevel)
+		app.Logger.SetLevel(logf.DebugLevel)
 	}
-
 	// Unmarshall flags to the app.
 	err = k.Unmarshal("", &app.QueryFlags)
 	if err != nil {
-		app.Logger.WithError(err).Error("error loading args")
-		app.Logger.Exit(2)
+		app.Logger.WithError(err).Fatal("error loading args")
 	}
 
 	// Load all `non-flag` arguments
@@ -117,8 +111,7 @@ func main() {
 	// Load Nameservers.
 	err = app.LoadNameservers()
 	if err != nil {
-		app.Logger.WithError(err).Error("error loading nameservers")
-		app.Logger.Exit(2)
+		app.Logger.WithError(err).Fatal("error loading nameservers")
 	}
 
 	// Load Resolvers.
@@ -129,14 +122,13 @@ func main() {
 		SearchList:         app.ResolverOpts.SearchList,
 		Ndots:              app.ResolverOpts.Ndots,
 		Timeout:            app.QueryFlags.Timeout * time.Second,
-		Logger:             app.Logger,
+		Logger:             logger,
 		Strategy:           app.QueryFlags.Strategy,
 		InsecureSkipVerify: app.QueryFlags.InsecureSkipVerify,
 		TLSHostname:        app.QueryFlags.TLSHostname,
 	})
 	if err != nil {
-		app.Logger.WithError(err).Error("error loading resolver")
-		app.Logger.Exit(2)
+		app.Logger.WithError(err).Fatal("error loading resolver")
 	}
 	app.Resolvers = rslvrs
 
@@ -144,7 +136,7 @@ func main() {
 	app.Logger.Debug("Starting doggo 🐶")
 	if len(app.QueryFlags.QNames) == 0 {
 		f.Usage()
-		app.Logger.Exit(0)
+		os.Exit(0)
 	}
 
 	// Resolve Queries.
@@ -161,5 +153,5 @@ func main() {
 	app.Output(responses)
 
 	// Quitting.
-	app.Logger.Exit(0)
+	os.Exit(0)
 }

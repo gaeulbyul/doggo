@@ -1,13 +1,12 @@
 package utils
 
-import "github.com/sirupsen/logrus"
+import (
+	"github.com/mr-karan/logf"
+)
 
 // InitLogger initializes logger.
-func InitLogger() *logrus.Logger {
-	logger := logrus.New()
-	logger.SetFormatter(&logrus.TextFormatter{
-		FullTimestamp:          true,
-		DisableLevelTruncation: true,
-	})
+func InitLogger() *logf.Logger {
+	logger := logf.New()
+	logger.SetColorOutput(true)
 	return logger
 }

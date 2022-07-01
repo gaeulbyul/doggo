@@ -4,12 +4,12 @@ import (
 	"github.com/miekg/dns"
 	"github.com/mr-karan/doggo/pkg/models"
 	"github.com/mr-karan/doggo/pkg/resolvers"
-	"github.com/sirupsen/logrus"
+	"github.com/mr-karan/logf"
 )
 
 // App represents the structure for all app wide configuration.
 type App struct {
-	Logger       *logrus.Logger
+	Logger       *logf.Logger
 	Version      string
 	QueryFlags   models.QueryFlags
 	Questions    []dns.Question
@@ -19,7 +19,7 @@ type App struct {
 }
 
 // NewApp initializes an instance of App which holds app wide configuration.
-func New(logger *logrus.Logger, buildVersion string) App {
+func New(logger *logf.Logger, buildVersion string) App {
 	app := App{
 		Logger:  logger,
 		Version: buildVersion,

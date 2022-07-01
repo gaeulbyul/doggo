@@ -8,7 +8,7 @@ import (
 
 	"github.com/mr-karan/doggo/internal/app"
 	"github.com/mr-karan/doggo/pkg/utils"
-	"github.com/sirupsen/logrus"
+	"github.com/mr-karan/logf"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -67,11 +67,11 @@ func main() {
 		IdleTimeout:  ko.Duration("server.keepalive_timeout") * time.Millisecond,
 	}
 
-	logger.WithFields(logrus.Fields{
+	logger.WithFields(logf.Fields{
 		"address": srv.Addr,
 	}).Info("starting server")
 
 	if err := srv.ListenAndServe(); err != nil {
-		logger.Fatalf("couldn't start server: %v", err)
+		logger.WithError(err).Fatal("couldn't start server")
 	}
 }

@@ -46,8 +46,7 @@ func (app *App) ReverseLookup() {
 	for _, n := range app.QueryFlags.QNames {
 		addr, err := dns.ReverseAddr(n)
 		if err != nil {
-			app.Logger.WithError(err).Error("error formatting address")
-			app.Logger.Exit(2)
+			app.Logger.WithError(err).Fatal("error formatting address")
 		}
 		formattedNames = append(formattedNames, addr)
 	}
