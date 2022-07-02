@@ -39,7 +39,8 @@ func main() {
 	f.BoolP("reverse", "x", false, "Performs a DNS Lookup for an IPv4 or IPv6 address. Sets the query type and class to PTR and IN respectively.")
 
 	// Resolver Options
-	f.Int("timeout", 5, "Sets the timeout for a query to T seconds. The default timeout is 5 seconds.")
+	f.Int("timeout", 2, "Sets the timeout for a query to T seconds. The default timeout is 2 seconds.")
+	f.Int("retry", 3, "Number of times to retry DNS lookup")
 	f.Bool("search", true, "Use the search list provided in resolv.conf. It sets the `ndots` parameter as well unless overridden by `ndots` flag.")
 	f.Int("ndots", -1, "Specify the ndots parameter. Default value is taken from resolv.conf and fallbacks to 1 if ndots statement is missing in resolv.conf")
 	f.BoolP("ipv4", "4", false, "Use IPv4 only")
@@ -75,7 +76,6 @@ func main() {
 
 	// Set log level.
 	if k.Bool("debug") {
-		// Set logger level
 		app.Logger.SetLevel(logf.DebugLevel)
 	}
 	// Unmarshall flags to the app.
@@ -96,7 +96,6 @@ func main() {
 	// query type as PTR and query class as IN.
 	// Modify query name like 94.2.0.192.in-addr.arpa if it's an IPv4 address.
 	// Use IP6.ARPA nibble format otherwise.
-
 	if app.QueryFlags.ReverseLookup {
 		app.ReverseLookup()
 	}
@@ -131,7 +130,6 @@ func main() {
 	}
 	app.Resolvers = rslvrs
 
-	// Run the app.
 	app.Logger.Debug("Starting doggo 🐶")
 	if len(app.QueryFlags.QNames) == 0 {
 		f.Usage()
@@ -142,7 +140,7 @@ func main() {
 	var responses []resolvers.Response
 	for _, q := range app.Questions {
 		for _, rslv := range app.Resolvers {
-			resp, err := rslv.Lookup(q)
+			resp, err := app.LookupWithRetry(app.QueryFlags.RetryCount, rslv, q)
 			if err != nil {
 				app.Logger.WithError(err).Error("error looking up DNS records")
 			}
