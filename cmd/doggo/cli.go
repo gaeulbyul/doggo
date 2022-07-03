@@ -48,6 +48,7 @@ func main() {
 	f.String("strategy", "all", "Strategy to query nameservers in resolv.conf file (`all`, `random`, `first`)")
 	f.String("tls-hostname", "", "Provide a hostname for doing verification of the certificate if the provided DoT nameserver is an IP")
 	f.Bool("skip-hostname-verification", false, "Skip TLS Hostname Verification")
+	f.StringSliceP("tweaks", "Z", []string{}, "Specify protocol tweaks. Set flags like aa,ad,cd")
 
 	// Output Options
 	f.BoolP("json", "J", false, "Set the output format as JSON")
@@ -112,8 +113,7 @@ func main() {
 		app.Logger.WithError(err).Fatal("error loading nameservers")
 	}
 
-	// Load Resolvers.
-	rslvrs, err := resolvers.LoadResolvers(resolvers.Options{
+	ropts := resolvers.Options{
 		Nameservers:        app.Nameservers,
 		UseIPv4:            app.QueryFlags.UseIPv4,
 		UseIPv6:            app.QueryFlags.UseIPv6,
@@ -124,7 +124,19 @@ func main() {
 		Strategy:           app.QueryFlags.Strategy,
 		InsecureSkipVerify: app.QueryFlags.InsecureSkipVerify,
 		TLSHostname:        app.QueryFlags.TLSHostname,
-	})
+	}
+
+	if contains(app.QueryFlags.Tweaks, "aa") {
+		ropts.Authoritative = true
+	}
+	if contains(app.QueryFlags.Tweaks, "ad") {
+		ropts.AuthenticatedData = true
+	}
+	if contains(app.QueryFlags.Tweaks, "cd") {
+		ropts.CheckingDisabled = true
+	}
+	// Load Resolvers.
+	rslvrs, err := resolvers.LoadResolvers(ropts)
 	if err != nil {
 		app.Logger.WithError(err).Fatal("error loading resolver")
 	}

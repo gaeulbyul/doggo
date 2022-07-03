@@ -24,7 +24,7 @@ func prepareMessages(q dns.Question, opts Options) []dns.Msg {
 				Authoritative:     opts.Authoritative,
 				AuthenticatedData: opts.AuthenticatedData,
 				CheckingDisabled:  opts.CheckingDisabled,
-				RecursionDesired:  opts.RecursionDesired,
+				RecursionDesired:  true,
 			},
 		}
 		// It's recommended to only send 1 question for 1 DNS message.

@@ -40,6 +40,7 @@ type QueryFlags struct {
 	InsecureSkipVerify bool          `koanf:"skip-hostname-verification" skip-hostname-verification:"-"`
 	TLSHostname        string        `koanf:"tls-hostname" tls-hostname:"-"`
 	RetryCount         int           `koanf:"retry" retry:"-"`
+	Tweaks             []string      `koanf:"tweaks" json:"-"`
 }
 
 // Nameserver represents the type of Nameserver

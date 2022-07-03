@@ -19,10 +19,10 @@ var appHelpTextTemplate = `{{ "NAME" | color "" "heading" }}:
   {{.Version | color "red" "" }}
 
 {{ "EXAMPLES" | color "" "heading" }}:
-  {{ .Name | color "green" "bold" }} {{ "mrkaran.dev" | color "cyan" "" }}                            	Query a domain using defaults.
-  {{ .Name | color "green" "bold" }} {{ "mrkaran.dev CNAME" | color "cyan" "" }}                 	Looks up for a CNAME record.
-  {{ .Name | color "green" "bold" }} {{ "mrkaran.dev MX @9.9.9.9" | color "cyan" "" }}              	Uses a custom DNS resolver.
-  {{ .Name | color "green" "bold" }} {{"-q mrkaran.dev -t MX -n 1.1.1.1" | color "yellow" ""}}   	Using named arguments.
+  {{ .Name | color "green" "bold" }} {{ "mrkaran.dev" | color "cyan" "" }} {{"\t"}} Query a domain using defaults.
+  {{ .Name | color "green" "bold" }} {{ "mrkaran.dev CNAME" | color "cyan" "" }} {{"\t"}} Looks up for a CNAME record.
+  {{ .Name | color "green" "bold" }} {{ "mrkaran.dev MX @9.9.9.9" | color "cyan" "" }} {{"\t"}} Uses a custom DNS resolver.
+  {{ .Name | color "green" "bold" }} {{"-q mrkaran.dev -t MX -n 1.1.1.1" | color "yellow" ""}} {{"\t"}} Using named arguments.
 
 {{ "Free Form Arguments" | color "" "heading" }}:
   Supply hostnames, query types, classes without any flag. For eg:

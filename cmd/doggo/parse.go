@@ -33,3 +33,13 @@ func loadUnparsedArgs(args []string) ([]string, []string, []string, []string) {
 	}
 	return ns, qt, qc, qn
 }
+
+// contains is a helper method to check if a paritcular element exists in the slice.
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
