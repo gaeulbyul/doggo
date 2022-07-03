@@ -22,6 +22,12 @@ type Options struct {
 	Strategy           string
 	InsecureSkipVerify bool
 	TLSHostname        string
+
+	// DNS Protocol Flags.
+	Authoritative     bool
+	AuthenticatedData bool
+	CheckingDisabled  bool
+	RecursionDesired  bool
 }
 
 // Resolver implements the configuration for a DNS

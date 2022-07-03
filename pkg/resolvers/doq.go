@@ -37,7 +37,7 @@ func NewDOQResolver(server string, resolverOpts Options) (Resolver, error) {
 func (r *DOQResolver) Lookup(question dns.Question) (Response, error) {
 	var (
 		rsp      Response
-		messages = prepareMessages(question, r.resolverOptions.Ndots, r.resolverOptions.SearchList)
+		messages = prepareMessages(question, r.resolverOptions)
 	)
 
 	session, err := quic.DialAddr(r.server, r.tls, nil)
@@ -51,7 +51,7 @@ func (r *DOQResolver) Lookup(question dns.Question) (Response, error) {
 			"domain":     msg.Question[0].Name,
 			"ndots":      r.resolverOptions.Ndots,
 			"nameserver": r.server,
-		}).Debug("Attempting to resolve")
+		}).Debug("attempting to resolve")
 
 		// ref: https://www.rfc-editor.org/rfc/rfc9250.html#name-dns-message-ids
 		msg.Id = 0

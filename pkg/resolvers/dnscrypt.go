@@ -46,14 +46,14 @@ func NewDNSCryptResolver(server string, dnscryptOpts DNSCryptResolverOpts, resol
 func (r *DNSCryptResolver) Lookup(question dns.Question) (Response, error) {
 	var (
 		rsp      Response
-		messages = prepareMessages(question, r.resolverOptions.Ndots, r.resolverOptions.SearchList)
+		messages = prepareMessages(question, r.resolverOptions)
 	)
 	for _, msg := range messages {
 		r.resolverOptions.Logger.WithFields(logf.Fields{
 			"domain":     msg.Question[0].Name,
 			"ndots":      r.resolverOptions.Ndots,
 			"nameserver": r.server,
-		}).Debug("Attempting to resolve")
+		}).Debug("attempting to resolve")
 		now := time.Now()
 		in, err := r.client.Exchange(&msg, r.resolverInfo)
 		if err != nil {

@@ -11,17 +11,22 @@ import (
 
 // prepareMessages takes a  DNS Question and returns the
 // corresponding DNS messages for the same.
-func prepareMessages(q dns.Question, ndots int, searchList []string) []dns.Msg {
+func prepareMessages(q dns.Question, opts Options) []dns.Msg {
 	var (
-		possibleQNames = constructPossibleQuestions(q.Name, ndots, searchList)
+		possibleQNames = constructPossibleQuestions(q.Name, opts.Ndots, opts.SearchList)
 		messages       = make([]dns.Msg, 0, len(possibleQNames))
 	)
 
 	for _, qName := range possibleQNames {
-		msg := dns.Msg{}
-		// generate a random id for the transaction.
-		msg.Id = dns.Id()
-		msg.RecursionDesired = true
+		msg := dns.Msg{
+			MsgHdr: dns.MsgHdr{
+				Id:                dns.Id(),
+				Authoritative:     opts.Authoritative,
+				AuthenticatedData: opts.AuthenticatedData,
+				CheckingDisabled:  opts.CheckingDisabled,
+				RecursionDesired:  opts.RecursionDesired,
+			},
+		}
 		// It's recommended to only send 1 question for 1 DNS message.
 		msg.Question = []dns.Question{{
 			Name:   qName,

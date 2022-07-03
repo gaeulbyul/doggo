@@ -63,14 +63,14 @@ func NewClassicResolver(server string, classicOpts ClassicResolverOpts, resolver
 func (r *ClassicResolver) Lookup(question dns.Question) (Response, error) {
 	var (
 		rsp      Response
-		messages = prepareMessages(question, r.resolverOptions.Ndots, r.resolverOptions.SearchList)
+		messages = prepareMessages(question, r.resolverOptions)
 	)
 	for _, msg := range messages {
 		r.resolverOptions.Logger.WithFields(logf.Fields{
 			"domain":     msg.Question[0].Name,
 			"ndots":      r.resolverOptions.Ndots,
 			"nameserver": r.server,
-		}).Debug("Attempting to resolve")
+		}).Debug("attempting to resolve")
 
 		// Since the library doesn't include tcp.Dial time,
 		// it's better to not rely on `rtt` provided here and calculate it ourselves.

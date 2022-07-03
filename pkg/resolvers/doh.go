@@ -45,7 +45,7 @@ func NewDOHResolver(server string, resolverOpts Options) (Resolver, error) {
 func (r *DOHResolver) Lookup(question dns.Question) (Response, error) {
 	var (
 		rsp      Response
-		messages = prepareMessages(question, r.resolverOptions.Ndots, r.resolverOptions.SearchList)
+		messages = prepareMessages(question, r.resolverOptions)
 	)
 
 	for _, msg := range messages {
@@ -53,7 +53,7 @@ func (r *DOHResolver) Lookup(question dns.Question) (Response, error) {
 			"domain":     msg.Question[0].Name,
 			"ndots":      r.resolverOptions.Ndots,
 			"nameserver": r.server,
-		}).Debug("Attempting to resolve")
+		}).Debug("attempting to resolve")
 		// get the DNS Message in wire format.
 		b, err := msg.Pack()
 		if err != nil {
